@@ -1,0 +1,4 @@
+import { redirect } from 'next/navigation'; import Link from 'next/link'; import {createClient} from '@/lib/supabase-server'; import {adminDb} from '@/lib/supabase-admin'; import QuizManager from './quiz-manager';
+export default async function QuizzesPage(){const auth=await createClient();const {data:{user}}=await auth.auth.getUser();if(!user)redirect('/admin/login');if(process.env.ADMIN_EMAIL&&user.email?.toLowerCase()!==process.env.ADMIN_EMAIL.toLowerCase())redirect('/admin');
+const db=adminDb();const {data}=await db.from('quizzes').select('*').order('created_at',{ascending:false});
+return <main className="shell"><section className="panel"><div className="row between"><h1>Manage quizzes</h1><Link href="/admin" className="btn secondary">Dashboard</Link></div><QuizManager initial={data||[]}/></section></main>}

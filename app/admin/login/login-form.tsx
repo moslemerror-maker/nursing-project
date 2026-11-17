@@ -1,0 +1,5 @@
+'use client';
+import {useState} from 'react'; import {browserDb} from '@/lib/supabase-browser'; import {useRouter} from 'next/navigation';
+export default function LoginForm(){const [email,setEmail]=useState('');const [password,setPassword]=useState('');const [error,setError]=useState('');const [busy,setBusy]=useState(false);const router=useRouter();
+async function submit(e:React.FormEvent){e.preventDefault();setBusy(true);setError('');const {error}=await browserDb().auth.signInWithPassword({email,password});if(error)setError(error.message);else router.push('/admin');setBusy(false);}
+return <form onSubmit={submit}><label className="field">Email<input type="email" required value={email} onChange={e=>setEmail(e.target.value)}/></label><label className="field">Password<input type="password" required value={password} onChange={e=>setPassword(e.target.value)}/></label>{error&&<p className="notice">{error}</p>}<button className="btn" disabled={busy}>{busy?'Signing in…':'Sign in'}</button></form>}
